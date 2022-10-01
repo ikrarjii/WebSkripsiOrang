@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 
-class Profile extends StatefulWidget {
-  const Profile({Key? key}) : super(key: key);
+class Presensi extends StatefulWidget {
+  const Presensi({Key? key}) : super(key: key);
 
   @override
-  State<Profile> createState() => _ProfileState();
+  State<Presensi> createState() => _PresensiState();
 }
 
-class _ProfileState extends State<Profile> {
+class _PresensiState extends State<Presensi> {
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -23,7 +23,7 @@ class _ProfileState extends State<Profile> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
-                  "Profile",
+                  "Data Presensi",
                   style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600),
                 ),
               ],

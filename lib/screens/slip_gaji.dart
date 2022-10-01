@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 
-class Raports extends StatefulWidget {
-  const Raports({Key? key}) : super(key: key);
+class Gaji extends StatefulWidget {
+  const Gaji({Key? key}) : super(key: key);
 
   @override
-  State<Raports> createState() => _RaportsState();
+  State<Gaji> createState() => _GajiState();
 }
 
-class _RaportsState extends State<Raports> {
+class _GajiState extends State<Gaji> {
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -23,7 +23,7 @@ class _RaportsState extends State<Raports> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
-                  "Raports",
+                  "Slip Gaji",
                   style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600),
                 ),
               ],

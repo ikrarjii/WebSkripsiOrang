@@ -1,8 +1,14 @@
+import 'dart:html';
+
 import 'package:flutter/material.dart';
+import 'package:web_dashboard_app_tut/resources/gambar.dart';
+import 'package:web_dashboard_app_tut/resources/warna.dart';
+import 'package:web_dashboard_app_tut/screens/Logout.dart';
 import 'package:web_dashboard_app_tut/screens/home.dart';
-import 'package:web_dashboard_app_tut/screens/profile.dart';
-import 'package:web_dashboard_app_tut/screens/rapports.dart';
-import 'package:web_dashboard_app_tut/screens/settings.dart';
+import 'package:web_dashboard_app_tut/screens/QR_code.dart';
+import 'package:web_dashboard_app_tut/screens/DT_karyawan.dart';
+import 'package:web_dashboard_app_tut/screens/DT_presensi.dart';
+import 'package:web_dashboard_app_tut/screens/slip_gaji.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({Key? key}) : super(key: key);
@@ -13,8 +19,8 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   //setting the expansion function for the navigation rail
-  bool isExpanded = true;
-  int index = 0;
+
+  int index = 2;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,20 +31,38 @@ class _DashboardScreenState extends State<DashboardScreen> {
           Container(
             child: NavigationRail(
                 leading: Container(
-                  color: Colors.white,
+                  color: Warna.putih,
                   width: 240,
                   height: 80,
-                  child: Text("Profile"),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 30,
+                              backgroundColor: Warna.mrah,
+                              backgroundImage: AssetImage(Gambar.logo),
+                            ),
+                            Text("harma"),
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
                 ),
-                extended: isExpanded,
-                backgroundColor: Colors.green,
+                extended: true,
+                backgroundColor: Warna.hijau2,
                 unselectedIconTheme:
                     IconThemeData(color: Colors.white, opacity: 1),
                 unselectedLabelTextStyle: TextStyle(
-                  color: Colors.white,
+                  color: Warna.putih,
                 ),
-                selectedIconTheme:
-                    IconThemeData(color: Colors.deepPurple.shade900),
+                selectedLabelTextStyle: TextStyle(color: Warna.kuning),
+                selectedIconTheme: IconThemeData(color: Warna.kuning),
                 onDestinationSelected: (value) {
                   setState(() {
                     index = value;
@@ -46,31 +70,43 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 },
                 destinations: [
                   NavigationRailDestination(
-                    icon: Icon(Icons.home),
-                    label: Text("Home"),
+                    icon: Icon(Icons.qr_code_2_sharp),
+                    label: Text("QR Code"),
                   ),
                   NavigationRailDestination(
                     icon: Icon(Icons.bar_chart),
-                    label: Text("Rapports"),
+                    label: Text("Dashbord"),
                   ),
                   NavigationRailDestination(
-                    icon: Icon(Icons.person),
-                    label: Text("Profile"),
+                    icon: Icon(Icons.account_box),
+                    label: Text("Data Karyawan"),
                   ),
                   NavigationRailDestination(
-                    icon: Icon(Icons.settings),
-                    label: Text("Settings"),
+                    icon: Icon(Icons.fact_check),
+                    label: Text("Data Presensi"),
+                  ),
+                  NavigationRailDestination(
+                    icon: Icon(Icons.monetization_on),
+                    label: Text("Slip Gaji"),
+                  ),
+                  NavigationRailDestination(
+                    icon: Icon(Icons.logout),
+                    label: Text("Logout"),
                   ),
                 ],
                 selectedIndex: index),
           ),
           index == 0
-              ? Home()
+              ? Code()
               : index == 1
-                  ? Raports()
+                  ? Home()
                   : index == 2
-                      ? Profile()
-                      : Setting()
+                      ? Karyawan()
+                      : index == 3
+                          ? Presensi()
+                          : index == 4
+                              ? Gaji()
+                              : Logout()
         ],
       ),
     );

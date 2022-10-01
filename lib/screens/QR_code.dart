@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 
-class Setting extends StatefulWidget {
-  const Setting({Key? key}) : super(key: key);
+class Code extends StatefulWidget {
+  const Code({Key? key}) : super(key: key);
 
   @override
-  State<Setting> createState() => _SettingState();
+  State<Code> createState() => _CodeState();
 }
 
-class _SettingState extends State<Setting> {
+class _CodeState extends State<Code> {
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -23,7 +23,7 @@ class _SettingState extends State<Setting> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
-                  "Setting",
+                  "QR Code",
                   style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600),
                 ),
               ],

@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:web_dashboard_app_tut/resources/warna.dart';
 
-class Home extends StatefulWidget {
-  const Home({Key? key}) : super(key: key);
+import 'package:web_dashboard_app_tut/widgets/formcuxtom.dart';
+
+class Karyawan extends StatefulWidget {
+  const Karyawan({Key? key}) : super(key: key);
 
   @override
-  State<Home> createState() => _HomeState();
+  State<Karyawan> createState() => _KaryawanState();
 }
 
-class _HomeState extends State<Home> {
+class _KaryawanState extends State<Karyawan> {
+  List dataList = [];
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -23,14 +27,41 @@ class _HomeState extends State<Home> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
-                  "Dashbord",
+                  "Data Karyawan",
                   style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600),
                 ),
               ],
             ),
           ),
+          Container(
+            margin: EdgeInsets.only(left: 1000, right: 20, top: 10),
+            width: double.infinity,
+            height: 40,
+            decoration: BoxDecoration(
+                color: Warna.putih, borderRadius: BorderRadius.circular(5)),
+            child: Center(
+                child: TextField(
+              decoration: InputDecoration(
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Warna.hijau2,
+                      width: 1.0,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Warna.hijau2,
+                      width: 1.0,
+                    ),
+                  ),
+                  suffixIcon: IconButton(
+                    icon: Icon(Icons.search),
+                    onPressed: () {},
+                  )),
+            )),
+          ),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 30, vertical: 50),
+            padding: EdgeInsets.only(left: 20, right: 20, bottom: 50, top: 15),
             child: SingleChildScrollView(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -59,26 +90,16 @@ class _HomeState extends State<Home> {
                               DataCell(Text("2.3K Views")),
                               DataCell(Text("102Comments")),
                               DataCell(Text("102Comments")),
-                              DataCell(Text("102Comments")),
-                            ]),
-                            DataRow(cells: [
-                              DataCell(Text("1")),
                               DataCell(
-                                  Text("How to build a Flutter Mobile App")),
-                              DataCell(Text("${DateTime.now()}")),
-                              DataCell(Text("21.3K Views")),
-                              DataCell(Text("1020Comments")),
-                              DataCell(Text("102Comments")),
-                              DataCell(Text("102Comments")),
-                            ]),
-                            DataRow(cells: [
-                              DataCell(Text("2")),
-                              DataCell(Text("Flutter for your first project")),
-                              DataCell(Text("${DateTime.now()}")),
-                              DataCell(Text("2.3M Views")),
-                              DataCell(Text("10K Comments")),
-                              DataCell(Text("102Comments")),
-                              DataCell(Text("102Comments")),
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                      textStyle: const TextStyle(fontSize: 16)),
+                                  onPressed: () {
+                                    print("edit");
+                                  },
+                                  child: Text('Ubah'),
+                                ),
+                              ),
                             ]),
                           ]),
                       //Now let's set the pagination
