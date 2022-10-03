@@ -21,7 +21,7 @@ class _KaryawanState extends State<Karyawan> {
         children: [
           Padding(
             padding:
-                const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 40),
+                const EdgeInsets.only(left: 20, right: 20, top: 30, bottom: 40),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,

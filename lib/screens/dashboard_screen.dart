@@ -35,21 +35,47 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   width: 240,
                   height: 80,
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    child: Column(
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            CircleAvatar(
-                              radius: 30,
-                              backgroundColor: Warna.mrah,
-                              backgroundImage: AssetImage(Gambar.logo),
-                            ),
-                            Text("harma"),
-                          ],
-                        )
+                        CircleAvatar(
+                          radius: 25,
+                          backgroundColor: Warna.mrah,
+                          backgroundImage: AssetImage(Gambar.logo),
+                        ),
+                        TextButton(
+                          onPressed: () {},
+                          child: Column(
+                            children: [
+                              Padding(
+                                  padding: EdgeInsets.only(
+                                left: 15,
+                                top: 8,
+                              )),
+                              Text(
+                                "Harma",
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                  color: Warna.htam,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 3,
+                              ),
+                              Text(
+                                "Karyawan",
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                  color: Warna.kuning,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                   ),
