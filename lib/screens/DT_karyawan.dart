@@ -1,13 +1,9 @@
-import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+// import 'package:fluttertoast/fluttertoast.dart';
 import 'package:web_dashboard_app_tut/resources/warna.dart';
-
-import 'package:web_dashboard_app_tut/widgets/formcuxtom.dart';
 
 class Karyawan extends StatefulWidget {
   const Karyawan({Key? key}) : super(key: key);
@@ -46,16 +42,16 @@ class _KaryawanState extends State<Karyawan> {
 
       Navigator.of(this.context).pop('dialog');
       setLoad(false);
-      Fluttertoast.showToast(
-          msg: "Berhasil update user.",
-          toastLength: Toast.LENGTH_SHORT,
-          timeInSecForIosWeb: 2,
-          webShowClose: true,
-          webPosition: "right",
-          webBgColor: "#5cb85c",
-          gravity: ToastGravity.TOP,
-          textColor: Colors.white,
-          fontSize: 16.0);
+      // Fluttertoast.showToast(
+      //     msg: "Berhasil update user.",
+      //     toastLength: Toast.LENGTH_SHORT,
+      //     timeInSecForIosWeb: 2,
+      //     webShowClose: true,
+      //     webPosition: "right",
+      //     webBgColor: "#5cb85c",
+      //     gravity: ToastGravity.TOP,
+      //     textColor: Colors.white,
+      //     fontSize: 16.0);
     } on FirebaseException catch (e) {
       Navigator.of(this.context).pop('dialog');
       setLoad(false);
@@ -71,16 +67,16 @@ class _KaryawanState extends State<Karyawan> {
 
       Navigator.of(this.context).pop('dialog');
       setLoad(false);
-      Fluttertoast.showToast(
-          msg: "Berhasil hapus user.",
-          toastLength: Toast.LENGTH_SHORT,
-          timeInSecForIosWeb: 2,
-          webShowClose: true,
-          webPosition: "right",
-          webBgColor: "#5cb85c",
-          gravity: ToastGravity.TOP,
-          textColor: Colors.white,
-          fontSize: 16.0);
+      // Fluttertoast.showToast(
+      //     msg: "Berhasil hapus user.",
+      //     toastLength: Toast.LENGTH_SHORT,
+      //     timeInSecForIosWeb: 2,
+      //     webShowClose: true,
+      //     webPosition: "right",
+      //     webBgColor: "#5cb85c",
+      //     gravity: ToastGravity.TOP,
+      //     textColor: Colors.white,
+      //     fontSize: 16.0);
     } on FirebaseException catch (e) {
       Navigator.of(this.context).pop('dialog');
       setLoad(false);
@@ -93,9 +89,10 @@ class _KaryawanState extends State<Karyawan> {
         stream: search != ""
             ? firestore
                 .collection("users")
+                .orderBy("nama")
                 .where("nama", isEqualTo: search)
                 .snapshots()
-            : firestore.collection("users").snapshots(),
+            : firestore.collection("users").orderBy("nama").snapshots(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             return Expanded(
@@ -116,6 +113,38 @@ class _KaryawanState extends State<Karyawan> {
                       ],
                     ),
                   ),
+                  Container(
+                    margin: EdgeInsets.only(
+                        bottom: 10, right: 14, left: 1100, top: 10),
+                    child: Row(
+                      children: [
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            primary: Warna.hijauht,
+                            padding: EdgeInsets.symmetric(horizontal: 15),
+                          ),
+                          child: Text("Cetak"),
+                          onPressed: () {},
+                        ),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Row(
+                          children: [
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                primary: Warna.abuabu,
+                                padding: EdgeInsets.symmetric(horizontal: 15),
+                              ),
+                              child: Text("Download"),
+                              onPressed: () {},
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(),
                   Container(
                     margin: EdgeInsets.only(
                         left: 900, right: 20, top: 10, bottom: 10),
@@ -152,8 +181,7 @@ class _KaryawanState extends State<Karyawan> {
                     )),
                   ),
                   Padding(
-                    padding: EdgeInsets.only(
-                        left: 20, right: 20, bottom: 50, top: 15),
+                    padding: EdgeInsets.only(bottom: 50, top: 15),
                     child: SingleChildScrollView(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -163,10 +191,12 @@ class _KaryawanState extends State<Karyawan> {
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
                               DataTable(
-                                  headingRowColor:
-                                      MaterialStateProperty.resolveWith(
-                                          (states) => Colors.grey.shade200),
-                                  columns: [
+                                  showBottomBorder: true,
+                                  columnSpacing: 45,
+                                  dataRowHeight: 45,
+                                  headingRowColor: MaterialStateProperty.all(
+                                      Colors.grey.shade200),
+                                  columns: <DataColumn>[
                                     DataColumn(label: Text("No.")),
                                     DataColumn(label: Text("Nama")),
                                     DataColumn(label: Text("Alamat")),

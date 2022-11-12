@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:qr_flutter/qr_flutter.dart';
+import 'package:web_dashboard_app_tut/resources/warna.dart';
 
 class Code extends StatefulWidget {
   const Code({Key? key}) : super(key: key);
@@ -13,6 +15,7 @@ class _CodeState extends State<Code> {
   @override
   Widget build(BuildContext context) {
     return Expanded(
+      //sebelum ini buat seleksi
       child: Column(
         children: [
           Padding(
@@ -29,60 +32,25 @@ class _CodeState extends State<Code> {
               ],
             ),
           ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      DataTable(
-                          headingRowColor: MaterialStateProperty.resolveWith(
-                              (states) => Colors.grey.shade200),
-                          columns: [
-                            DataColumn(label: Text("ID")),
-                            DataColumn(label: Text("Article Title")),
-                            DataColumn(label: Text("Creation Date")),
-                            DataColumn(label: Text("Views")),
-                            DataColumn(label: Text("Comments")),
-                          ],
-                          rows: [
-                            DataRow(cells: [
-                              DataCell(Text("0")),
-                              DataCell(Text("How to build a Flutter Web App")),
-                              DataCell(Text("${DateTime.now()}")),
-                              DataCell(Text("2.3K Views")),
-                              DataCell(Text("102Comments")),
-                            ]),
-                            DataRow(cells: [
-                              DataCell(Text("1")),
-                              DataCell(
-                                  Text("How to build a Flutter Mobile App")),
-                              DataCell(Text("${DateTime.now()}")),
-                              DataCell(Text("21.3K Views")),
-                              DataCell(Text("1020Comments")),
-                            ]),
-                            DataRow(cells: [
-                              DataCell(Text("2")),
-                              DataCell(Text("Flutter for your first project")),
-                              DataCell(Text("${DateTime.now()}")),
-                              DataCell(Text("2.3M Views")),
-                              DataCell(Text("10K Comments")),
-                            ]),
-                          ]),
-                      //Now let's set the pagination
-                      SizedBox(
-                        height: 40.0,
-                      ),
-                    ],
-                  )
-                ],
-              ),
+          Container(
+            padding: EdgeInsets.only(top: 50),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  child: QrImage(
+                      version: 6,
+                      backgroundColor: Warna.putih,
+                      foregroundColor: Warna.htam,
+                      errorCorrectionLevel: QrErrorCorrectLevel.M,
+                      padding: EdgeInsets.all(0),
+                      size: 350,
+                      data: "https://www.qr-code-generator.com/"),
+                ),
+              ],
             ),
-          ),
+          )
         ],
       ),
     );

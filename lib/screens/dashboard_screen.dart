@@ -1,13 +1,13 @@
-import 'dart:html';
-
 import 'package:flutter/material.dart';
 import 'package:web_dashboard_app_tut/resources/gambar.dart';
 import 'package:web_dashboard_app_tut/resources/warna.dart';
 import 'package:web_dashboard_app_tut/screens/Logout.dart';
-import 'package:web_dashboard_app_tut/screens/home.dart';
+import 'package:web_dashboard_app_tut/screens/Profil.dart';
+import 'package:web_dashboard_app_tut/screens/pengajuan.dart';
 import 'package:web_dashboard_app_tut/screens/QR_code.dart';
 import 'package:web_dashboard_app_tut/screens/DT_karyawan.dart';
 import 'package:web_dashboard_app_tut/screens/DT_presensi.dart';
+
 import 'package:web_dashboard_app_tut/screens/slip_gaji.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -20,7 +20,7 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   //setting the expansion function for the navigation rail
 
-  int index = 2;
+  int index = 1;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,7 +46,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           backgroundImage: AssetImage(Gambar.logo),
                         ),
                         TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Profil()));
+                          },
                           child: Column(
                             children: [
                               Padding(
@@ -101,7 +106,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ),
                   NavigationRailDestination(
                     icon: Icon(Icons.bar_chart),
-                    label: Text("Dashbord"),
+                    label: Text("Data Permohonan Karyawan"),
                   ),
                   NavigationRailDestination(
                     icon: Icon(Icons.account_box),
@@ -125,7 +130,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           index == 0
               ? Code()
               : index == 1
-                  ? Home()
+                  ? Pengajuan()
                   : index == 2
                       ? Karyawan()
                       : index == 3
