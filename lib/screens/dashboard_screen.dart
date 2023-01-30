@@ -47,10 +47,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         ),
                         TextButton(
                           onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => Profil()));
+                            // Navigator.push(
+                            //     context,
+                            //     MaterialPageRoute(
+                            //         builder: (context) => Profil()));
                           },
                           child: Column(
                             children: [

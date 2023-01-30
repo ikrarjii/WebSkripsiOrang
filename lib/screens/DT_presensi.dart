@@ -2,19 +2,26 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter/src/foundation/key.dart';
+import 'package:flutter/src/widgets/framework.dart';
 // import 'package:fluttertoast/fluttertoast.dart';
 import 'package:web_dashboard_app_tut/resources/warna.dart';
 import 'package:intl/intl.dart';
+import 'package:web_dashboard_app_tut/widgets/formcuxtom.dart';
+
+import 'package:flutter/services.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
 
 class Presensi extends StatefulWidget {
   const Presensi({Key? key}) : super(key: key);
 
   @override
-  State<Presensi> createState() => _PresensiState();
+  State<Presensi> createState() => _Presensi();
 }
 
-class _PresensiState extends State<Presensi> {
+class _Presensi extends State<Presensi> {
   DateTime selectedPeriod = DateTime.now();
   bool show = false;
 
@@ -25,12 +32,12 @@ class _PresensiState extends State<Presensi> {
 
   String nama = "";
   String email = "";
-  String checkin = "";
-  String checkout = "";
-  String createdat = "";
+  String noHp = "";
+  String noRekening = "";
+  String alamat = "";
   String tanggal = "";
   String keterangan = "";
-  bool loading = false;
+  bool _loading = false;
 
   Future<DateTime> _selectPeriod(BuildContext context) async {
     final selected = await showDatePicker(
@@ -46,50 +53,55 @@ class _PresensiState extends State<Presensi> {
     return selectedPeriod;
   }
 
-  // Future editUser(String? id, BuildContext context, Function setLoad) async {
-  //   setLoad(true);
-  //   try {
-  //     final docUser = FirebaseFirestore.instance.collection("presensi").doc(id);
-  //     final json = {
-  //       "email": email,
-  //       "nama": nama,
-  //       "checkin": checkin,
-  //       "checkout": checkout,
-  //       "tanggal": tanggal,
-  //       "keterangan": keterangan,
-  //       "updated_at": DateTime.now(),
-  //     };
-  //     await docUser.update(json);
+  Future editUser(String? id, BuildContext context, Function setLoad) async {
+    setLoad(true);
+    try {
+      final docUser = FirebaseFirestore.instance.collection("users").doc(id);
+      final json = {
+        "email": email,
+        "nama": nama,
+        "no_rekening": noRekening,
+        "alamat": alamat,
+        "no_hp": noHp,
+        "tanggal": tanggal,
+        "keterangan": keterangan,
+        "updated_at": DateTime.now(),
+      };
+      await docUser.update(json);
 
-  //     Navigator.of(this.context).pop('dialog');
-  //     setLoad(false);
-  //   } on FirebaseException catch (e) {
-  //     Navigator.of(this.context).pop('dialog');
-  //     setLoad(false);
-  //   }
-  // }
+      Navigator.of(this.context).pop('dialog');
+      setLoad(false);
+    } on FirebaseException catch (e) {
+      Navigator.of(this.context).pop('dialog');
+      setLoad(false);
+    }
+  }
 
-  // Future deleteUser(String? id, BuildContext context, Function setLoad) async {
-  //   setLoad(true);
-  //   try {
-  //     final docUser = FirebaseFirestore.instance.collection("presensi").doc(id);
+  Future deleteUser(String? id, BuildContext context, Function setLoad) async {
+    setLoad(true);
+    try {
+      final docUser = FirebaseFirestore.instance.collection("users").doc(id);
 
-  //     await docUser.delete();
+      await docUser.delete();
 
-  //     Navigator.of(this.context).pop('dialog');
-  //     setLoad(false);
-  //   } on FirebaseException catch (e) {
-  //     Navigator.of(this.context).pop('dialog');
-  //     setLoad(false);
-  //   }
-  // }
+      Navigator.of(this.context).pop('dialog');
+      setLoad(false);
+    } on FirebaseException catch (e) {
+      Navigator.of(this.context).pop('dialog');
+      setLoad(false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
         stream: search != ""
-            ? firestore.collection("absen").snapshots()
-            : firestore.collection("absen").snapshots(),
+            ? firestore
+                .collection("users")
+                .orderBy("nama")
+                .where("nama", isEqualTo: search)
+                .snapshots()
+            : firestore.collection("users").orderBy("nama").snapshots(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             return Expanded(
@@ -203,15 +215,15 @@ class _PresensiState extends State<Presensi> {
                   Padding(
                     padding: EdgeInsets.only(bottom: 50, top: 10),
                     child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
+                      scrollDirection: Axis.vertical,
                       child: SingleChildScrollView(
-                        scrollDirection: Axis.vertical,
+                        scrollDirection: Axis.horizontal,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Column(
-                              //crossAxisAlignment: CrossAxisAlignment.stretch,
+                              // crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
                                 DataTable(
                                   columnSpacing: 45,
@@ -222,7 +234,6 @@ class _PresensiState extends State<Presensi> {
                                       Colors.grey.shade200),
                                   columns: <DataColumn>[
                                     DataColumn(label: Text("No")),
-                                    DataColumn(label: Text("Id")),
                                     DataColumn(label: Text("Nama")),
                                     DataColumn(label: Text("Waktu Datang")),
                                     DataColumn(label: Text("Waktu Pulang")),
@@ -231,8 +242,6 @@ class _PresensiState extends State<Presensi> {
                                     DataColumn(label: Text("Lembur")),
                                     DataColumn(label: Text("Upah Lembur")),
                                     DataColumn(label: Text("Keterlambatan")),
-                                    DataColumn(
-                                        label: Text("Upah Keterlambatan")),
                                   ],
                                   rows: List<DataRow>.generate(
                                       snapshot.data!.docs.length, (index) {
@@ -242,22 +251,14 @@ class _PresensiState extends State<Presensi> {
 
                                     return DataRow(cells: [
                                       DataCell(Text(number.toString())),
-                                      DataCell(Text(data["month"])),
                                       DataCell(Text(data['nama'])),
-                                      DataCell(Text(
-                                          DateFormat('dd-MM-yyy-hh:mm')
-                                              .format(data['check_in'].toDate())
-                                              .toString())),
-                                      DataCell(Text(DateFormat(
-                                              'dd-MM-yyy-hh:mm')
-                                          .format(data['check_out'].toDate())
-                                          .toString())),
-                                      DataCell(Text(data['email'])),
-                                      DataCell(Text(data['email'])),
-                                      DataCell(Text(data['email'])),
-                                      DataCell(Text(data['email'])),
-                                      DataCell(Text(data['email'])),
-                                      DataCell(Text(data['email'])),
+                                      DataCell(Text('08:00')),
+                                      DataCell(Text("16:00")),
+                                      DataCell(Text(data["status"])),
+                                      DataCell(Text("8 Jam")),
+                                      DataCell(Text("3 Jam")),
+                                      DataCell(Text("Rp. 150.000")),
+                                      DataCell(Text("0")),
                                     ]);
                                   }),
                                 ),
@@ -317,4 +318,129 @@ class _PresensiState extends State<Presensi> {
       ),
     );
   }
+}
+
+void _createPdf() async {
+  final doc = pw.Document();
+
+  /// for using an image from assets
+  // final image = await imageFromAssetBundle('assets/image.png');
+
+  doc.addPage(
+    pw.Page(
+      pageFormat: PdfPageFormat.a4,
+      build: (pw.Context context) {
+        return pw.Center(
+          child: pw.Text('Hello eclectify Enthusiast'),
+        ); // Center
+      },
+    ),
+  ); // Page
+
+  /// print the document using the iOS or Android print service:
+  await Printing.layoutPdf(
+      onLayout: (PdfPageFormat format) async => doc.save());
+
+  /// share the document to other applications:
+  // await Printing.sharePdf(bytes: await doc.save(), filename: 'my-document.pdf');
+
+  /// tutorial for using path_provider: https://www.youtube.com/watch?v=fJtFDrjEvE8
+  /// save PDF with Flutter library "path_provider":
+  // final output = await getTemporaryDirectory();
+  // final file = File('${output.path}/example.pdf');
+  // await file.writeAsBytes(await doc.save());
+}
+
+void _displayPdf() {
+  final doc = pw.Document();
+  doc.addPage(
+    pw.Page(
+      pageFormat: PdfPageFormat.a4,
+      build: (pw.Context context) {
+        return pw.Center(
+          child: pw.Text(
+            'Data Pengajuan Karyawan',
+            style: pw.TextStyle(fontSize: 30),
+          ),
+        );
+      },
+    ),
+  );
+
+  /// open Preview Screen
+
+  // Navigator.push(context, MaterialPageRoute(builder:
+  //     (context) => PreviewScreen(doc: doc),));
+}
+
+class PreviewScreen extends StatelessWidget {
+  final pw.Document doc;
+
+  const PreviewScreen({
+    Key? key,
+    required this.doc,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          onPressed: () => Navigator.pop(context),
+          icon: Icon(Icons.arrow_back_outlined),
+        ),
+        centerTitle: true,
+        title: Text("Preview"),
+      ),
+      body: PdfPreview(
+        build: (format) => doc.save(),
+        allowSharing: true,
+        allowPrinting: true,
+        initialPageFormat: PdfPageFormat.a4,
+        pdfFileName: "mydoc.pdf",
+      ),
+    );
+  }
+}
+
+void _convertPdfToImages(pw.Document doc) async {
+  await for (var page
+      in Printing.raster(await doc.save(), pages: [0, 1], dpi: 72)) {
+    final image = page.toImage(); // ...or page.toPng()
+    print(image);
+  }
+}
+
+/// print an existing Pdf file from a Flutter asset
+void _printExistingPdf() async {
+  // import 'package:flutter/services.dart';
+  final pdf = await rootBundle.load('assets/document.pdf');
+  await Printing.layoutPdf(onLayout: (_) => pdf.buffer.asUint8List());
+}
+
+/// more advanced PDF styling
+Future<Uint8List> _generatePdf(PdfPageFormat format, String title) async {
+  final pdf = pw.Document(version: PdfVersion.pdf_1_5, compress: true);
+  final font = await PdfGoogleFonts.nunitoExtraLight();
+
+  pdf.addPage(
+    pw.Page(
+      pageFormat: format,
+      build: (context) {
+        return pw.Column(
+          children: [
+            pw.SizedBox(
+              width: double.infinity,
+              child: pw.FittedBox(
+                child: pw.Text(title, style: pw.TextStyle(font: font)),
+              ),
+            ),
+            pw.SizedBox(height: 20),
+            pw.Flexible(child: pw.FlutterLogo())
+          ],
+        );
+      },
+    ),
+  );
+  return pdf.save();
 }

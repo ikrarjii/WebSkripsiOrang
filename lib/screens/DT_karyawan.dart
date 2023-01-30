@@ -1,9 +1,17 @@
+import 'dart:typed_data';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 // import 'package:fluttertoast/fluttertoast.dart';
 import 'package:web_dashboard_app_tut/resources/warna.dart';
+// import 'package:syncfusion_flutter_pdf/pdf.dart';
+import 'package:web_dashboard_app_tut/resources/file_dt.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
 
 class Karyawan extends StatefulWidget {
   const Karyawan({Key? key}) : super(key: key);
@@ -92,6 +100,7 @@ class _KaryawanState extends State<Karyawan> {
                 .orderBy("nama")
                 .where("nama", isEqualTo: search)
                 .snapshots()
+               
             : firestore.collection("users").orderBy("nama").snapshots(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
@@ -124,7 +133,7 @@ class _KaryawanState extends State<Karyawan> {
                             padding: EdgeInsets.symmetric(horizontal: 15),
                           ),
                           child: Text("Cetak"),
-                          onPressed: () {},
+                          onPressed: _createPdf,
                         ),
                         SizedBox(
                           width: 5,
@@ -137,6 +146,7 @@ class _KaryawanState extends State<Karyawan> {
                                 padding: EdgeInsets.symmetric(horizontal: 15),
                               ),
                               child: Text("Download"),
+                              // onPressed: _createPDF,
                               onPressed: () {},
                             )
                           ],
@@ -554,4 +564,137 @@ class _KaryawanState extends State<Karyawan> {
       ),
     );
   }
+}
+
+// Future<void> _createPDF() async{
+//   PdfDocument document = PdfDocument();
+//   document.pages.add();
+
+//   List<int> bytes = document.save();
+//   document.dispose();
+// }
+
+void _createPdf() async {
+  final doc = pw.Document();
+
+  /// for using an image from assets
+  // final image = await imageFromAssetBundle('assets/image.png');
+
+  doc.addPage(
+    pw.Page(
+      pageFormat: PdfPageFormat.a4,
+      build: (pw.Context context) {
+        return pw.Center(
+          child: pw.Text('Hello eclectify Enthusiast'),
+        ); // Center
+      },
+    ),
+  ); // Page
+
+  /// print the document using the iOS or Android print service:
+  await Printing.layoutPdf(
+      onLayout: (PdfPageFormat format) async => doc.save());
+
+  /// share the document to other applications:
+  // await Printing.sharePdf(bytes: await doc.save(), filename: 'my-document.pdf');
+
+  /// tutorial for using path_provider: https://www.youtube.com/watch?v=fJtFDrjEvE8
+  /// save PDF with Flutter library "path_provider":
+  // final output = await getTemporaryDirectory();
+  // final file = File('${output.path}/example.pdf');
+  // await file.writeAsBytes(await doc.save());
+}
+
+void _displayPdf() {
+  final doc = pw.Document();
+  doc.addPage(
+    pw.Page(
+      pageFormat: PdfPageFormat.a4,
+      build: (pw.Context context) {
+        return pw.Center(
+          child: pw.Text(
+            'Data Pengajuan Karyawan',
+            style: pw.TextStyle(fontSize: 30),
+          ),
+        );
+      },
+    ),
+  );
+
+  /// open Preview Screen
+
+  // Navigator.push(context, MaterialPageRoute(builder:
+  //     (context) => PreviewScreen(doc: doc),));
+}
+
+class PreviewScreen extends StatelessWidget {
+  final pw.Document doc;
+
+  const PreviewScreen({
+    Key? key,
+    required this.doc,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          onPressed: () => Navigator.pop(context),
+          icon: Icon(Icons.arrow_back_outlined),
+        ),
+        centerTitle: true,
+        title: Text("Preview"),
+      ),
+      body: PdfPreview(
+        build: (format) => doc.save(),
+        allowSharing: true,
+        allowPrinting: true,
+        initialPageFormat: PdfPageFormat.a4,
+        pdfFileName: "mydoc.pdf",
+      ),
+    );
+  }
+}
+
+void _convertPdfToImages(pw.Document doc) async {
+  await for (var page
+      in Printing.raster(await doc.save(), pages: [0, 1], dpi: 72)) {
+    final image = page.toImage(); // ...or page.toPng()
+    print(image);
+  }
+}
+
+/// print an existing Pdf file from a Flutter asset
+void _printExistingPdf() async {
+  // import 'package:flutter/services.dart';
+  final pdf = await rootBundle.load('assets/document.pdf');
+  await Printing.layoutPdf(onLayout: (_) => pdf.buffer.asUint8List());
+}
+
+/// more advanced PDF styling
+Future<Uint8List> _generatePdf(PdfPageFormat format, String title) async {
+  final pdf = pw.Document(version: PdfVersion.pdf_1_5, compress: true);
+  final font = await PdfGoogleFonts.nunitoExtraLight();
+
+  pdf.addPage(
+    pw.Page(
+      pageFormat: format,
+      build: (context) {
+        return pw.Column(
+          children: [
+            pw.SizedBox(
+              width: double.infinity,
+              child: pw.FittedBox(
+                child: pw.Text(title, style: pw.TextStyle(font: font)),
+              ),
+            ),
+            pw.SizedBox(height: 20),
+            pw.Flexible(child: pw.FlutterLogo())
+          ],
+        );
+      },
+    ),
+  );
+  return pdf.save();
 }
